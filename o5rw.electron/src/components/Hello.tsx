@@ -20,8 +20,8 @@ export class Hello extends React.Component<HelloProps, HelloState> {
     maxTemperature = 127;
     
     speed = 0;
-    maxSpeed = .3;
-    acceleration = 0.001;
+    maxSpeed = .5;
+    acceleration = 0.0012;
     
     constructor( props: HelloProps ) {
         super( props );
@@ -61,16 +61,18 @@ export class Hello extends React.Component<HelloProps, HelloState> {
         var delta = target - this.state.temperature;
         var speedDelta = timePassed * this.acceleration;
         var slowDown = Math.pow(this.speed, 2)/(2*Math.abs(delta)) >= this.acceleration;
-        //if (slowDown)
-        if (target > this.state.temperature) {
-            this.speed = this._getLimited(this.speed + speedDelta, this.maxSpeed);
+        var headingToward = this._sameSigned(delta, this.speed);
+        var increasing = target > this.state.temperature;
+        var z;
+        if (increasing && !slowDown || !increasing && slowDown) {
+           z = 1;
         } else {
-            this.speed = this._getLimited(this.speed - speedDelta, this.maxSpeed);
+            z = -1;
         }
-        
+        this.speed = this._getLimited(this.speed + z * speedDelta, this.maxSpeed);
         var step = this.speed * timePassed;
         
-        if (this._oppositeSigned(step, delta)) {
+        if (!headingToward) {
             // Still decelerating away from the target
             return step;
         } 
@@ -144,8 +146,8 @@ export class Hello extends React.Component<HelloProps, HelloState> {
         context.lineTo( e, t )
     }
     
-    _oppositeSigned(a: number, b: number) {
-        return (a > 0 && b < 0) || (a < 0 && b > 0);
+    _sameSigned(a: number, b: number) {
+        return (a > 0 && b > 0) || (a < 0 && b < 0);
     }
     
     _getLimited(a: number, b: number) {

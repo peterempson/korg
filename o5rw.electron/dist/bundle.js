@@ -115,8 +115,8 @@
 	        this.arcLength = 2 * Math.PI - (this.minTheta - this.maxTheta);
 	        this.maxTemperature = 127;
 	        this.speed = 0;
-	        this.maxSpeed = .3;
-	        this.acceleration = 0.001;
+	        this.maxSpeed = .5;
+	        this.acceleration = 0.0012;
 	        this.doTheMouse = function (e) {
 	            var theta = Math.PI + Math.atan2(_this.cy - e.clientY, _this.cx - e.clientX); // 0 East, .5 Pi South
 	            if (theta > _this.midpointTheta && theta < _this.minTheta) {
@@ -161,15 +161,18 @@
 	        var delta = target - this.state.temperature;
 	        var speedDelta = timePassed * this.acceleration;
 	        var slowDown = Math.pow(this.speed, 2) / (2 * Math.abs(delta)) >= this.acceleration;
-	        //if (slowDown)
-	        if (target > this.state.temperature) {
-	            this.speed = this._getLimited(this.speed + speedDelta, this.maxSpeed);
+	        var headingToward = this._sameSigned(delta, this.speed);
+	        var increasing = target > this.state.temperature;
+	        var z;
+	        if (increasing && !slowDown || !increasing && slowDown) {
+	            z = 1;
 	        }
 	        else {
-	            this.speed = this._getLimited(this.speed - speedDelta, this.maxSpeed);
+	            z = -1;
 	        }
+	        this.speed = this._getLimited(this.speed + z * speedDelta, this.maxSpeed);
 	        var step = this.speed * timePassed;
-	        if (this._oppositeSigned(step, delta)) {
+	        if (!headingToward) {
 	            // Still decelerating away from the target
 	            return step;
 	        }
@@ -208,8 +211,8 @@
 	        var e = q + this.r * Math.cos(theta), t = w + this.r * Math.sin(theta);
 	        context.lineTo(e, t);
 	    };
-	    Hello.prototype._oppositeSigned = function (a, b) {
-	        return (a > 0 && b < 0) || (a < 0 && b > 0);
+	    Hello.prototype._sameSigned = function (a, b) {
+	        return (a > 0 && b > 0) || (a < 0 && b < 0);
 	    };
 	    Hello.prototype._getLimited = function (a, b) {
 	        var a_ = Math.abs(a);
