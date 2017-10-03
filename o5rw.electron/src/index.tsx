@@ -3,6 +3,7 @@ import electron = require("electron");
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {Hello} from "./components/Hello";
+import {Nixie} from "./components/Nixie";
 
 let ipc = electron.ipcRenderer;
 
@@ -17,6 +18,10 @@ ipc.on("PONG", function (event: any, data: any) {
 //}, 1000);
 
 ReactDOM.render(
-    <Hello compiler="TypeScript" framework="React"/>,
+        <div>
+            <Hello compiler="TypeScript" framework="React"/>
+            <Nixie />
+        </div>,
+    
     document.getElementById("example")
 );
