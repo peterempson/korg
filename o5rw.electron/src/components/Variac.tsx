@@ -1,9 +1,10 @@
 import * as React from "react";
 import { Motivator } from "./Motivator";
+import { Nixie } from "./Nixie";
 
-export interface HelloProps { compiler: string; framework: string};
-export interface HelloState {temperature: number};
-export class Hello extends React.Component<HelloProps, HelloState> {
+export interface VariacProps { updated: Function };
+export interface VariacState {temperature: number};
+export class Variac extends React.Component<VariacProps, VariacState> {
     canvas: HTMLCanvasElement;
     cx = 100;
     cy = 75;
@@ -15,11 +16,10 @@ export class Hello extends React.Component<HelloProps, HelloState> {
     midpointTheta = .5 * Math.PI;
     maxTheta = 0.15 * Math.PI;
     arcLength = 2 * Math.PI - ( this.minTheta - this.maxTheta )
-    
     maxTemperature = 127;
     
     
-    constructor( props: HelloProps ) {
+    constructor( props: VariacProps ) {
         super( props );
         this.state = {
             temperature: 0
@@ -56,20 +56,20 @@ export class Hello extends React.Component<HelloProps, HelloState> {
     
     motivatorUpdated = (value: number) => {
         this.setState({temperature: value});
+        
     }
     
-    componentDidUnmount() {
+    componentWillUnmount() {
         this.motivator.stop();
     }
     
     componentDidUpdate() {
         this.draw();
+        this.props.updated(this.state.temperature)
     }
 
     draw() {
         const context = this.canvas.getContext( "2d" );
-
-        const gradient = context.createLinearGradient( 0, 0, 150, 300 );
 
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
         context.strokeStyle = '#ffE000';

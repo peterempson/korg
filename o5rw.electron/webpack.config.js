@@ -4,8 +4,11 @@
  * is also in gulp/frontend.js
  */
 var path = require("path");
+var webpack = require('webpack');
 
 module.exports = {
+	target: 'electron-renderer',
+
     entry: ["./src/index.tsx"],
 
     output: {
@@ -20,27 +23,31 @@ module.exports = {
     devtool: "source-map",
 
     resolve: {
-        // Add '.ts' and '.tsx' as resolvable extensions.
-        extensions: ["", ".webpack.js", ".web.js", ".ts", ".tsx", ".js"]
+        extensions: [".webpack.js", ".web.js", ".ts", ".tsx", ".js"]
     },
 
-    plugins: [],
+    plugins: [
+    	 new webpack.LoaderOptionsPlugin({
+    	       debug: true
+    	     })
+
+    ],
 
     module: {
-        loaders: [
-            // All files with a '.ts' or '.tsx' extension will be handled by 'ts-loader'.
+        rules: [
+            {
+            	enforce: 'pre',
+                test: /\.js$/,
+                loader: "source-map-loader"
+            },
             {
                 test: /\.tsx?$/,
                 loader: "ts-loader",
                 exclude: /node_modules/
-            }
-        ],
-
-        preLoaders: [
-            // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
-            {
-                test: /\.js$/,
-                loader: "source-map-loader"
+            },
+            { 
+            	test: /\.(jpe?g|gif|png|ttf)$/, 
+            	loader: "file-loader"
             }
         ]
     },
@@ -51,7 +58,6 @@ module.exports = {
     // dependencies, which allows browsers to cache those libraries between builds.
     externals: {
         "react": "React",
-        "react-dom": "ReactDOM",
-        "react-timer-mixin": "TimerMixin"
+        "react-dom": "ReactDOM"
     }
 };

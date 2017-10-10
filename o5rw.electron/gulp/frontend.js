@@ -2,11 +2,8 @@ var gulp = require("gulp");
 var gutil = require("gulp-util");
 var webpack = require("webpack");
 var webpackConfig = require("../webpack.config");
-var webpackTargetElectronRenderer = require('webpack-target-electron-renderer');
 var plumber = require('gulp-plumber');
 var settings = require("./settings");
-
-webpackConfig.target = webpackTargetElectronRenderer(webpackConfig);
 
 gulp.task("webpack:build", function (callback) {
     // modify some webpack config options
@@ -39,7 +36,7 @@ gulp.task("webpack:build-dev", function (callback) {
         // modify some webpack config options
         var myDevConfig = Object.create(webpackConfig);
         myDevConfig.devtool = "sourcemap";
-        myDevConfig.debug = true;
+        //myDevConfig.debug = true;
 
         devCompiler = webpack(myDevConfig)
     }
