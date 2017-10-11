@@ -33,8 +33,8 @@ export class Motivator {
     }
     
     // 
-    // Stop the animationRequest cycle. Call on componentDidUnmount
-    // ------------------------------------------------------------
+    // Stop the animationRequest cycle. 
+    // --------------------------------
     stop() {
         if (this.animationRequest) {
             cancelAnimationFrame(this.animationRequest);
@@ -60,11 +60,12 @@ export class Motivator {
         if (this.lastAnimationTime && !this.speed ) {
             // Have reached the target so stop animationFrame cycle
             this.animationRequest = null;
+            this.lastAnimationTime = null;
         } else {
             
             this.animationRequest = requestAnimationFrame(this._tick);
+            this.lastAnimationTime = now;
         }
-        this.lastAnimationTime = now;
     }
     
     // 

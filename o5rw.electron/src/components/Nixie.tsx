@@ -20,7 +20,7 @@ export class Nixie extends React.Component< {}, {} > {
             this.digits[i] = {
                 value: silhouettes[i],
                 brightness: 0,
-                motivator: new Motivator( {id: i, callback: this.motivatorUpdated, maxSpeed: 0.01, maxValue: 1, acceleration: 0.001 })
+                motivator: new Motivator( {id: i, callback: this.motivatorUpdated, maxSpeed: 0.005, maxValue: 1, acceleration: 0.01 })
             };
         }
     }

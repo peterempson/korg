@@ -35,7 +35,9 @@ export class Variac extends React.Component<VariacProps, VariacState> {
     }
 
     mouseMove = ( e: React.MouseEvent<HTMLCanvasElement> ) => {
-        var theta = Math.PI + Math.atan2( this.cy - e.clientY, this.cx - e.clientX ); // 0 East, .5 Pi South
+        let mouseX =  e.clientX - this.canvas.offsetLeft;
+        let clientY = e.clientY - this.canvas.offsetTop;
+        var theta = Math.PI + Math.atan2( this.cy - clientY, this.cx - mouseX );
         if (theta > this.midpointTheta && theta < this.minTheta) {
             theta = this.minTheta
         } else if (theta <= this.midpointTheta && theta > this.maxTheta) {
