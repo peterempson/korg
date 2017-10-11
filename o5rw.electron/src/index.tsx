@@ -1,11 +1,8 @@
-/// <reference path="../typings/electron.d.ts" />
-//import electron = require("electron");
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {MeteredVariac} from "./components/MeteredVariac";
 
-var WebFont = require('webfontloader');
-var nixieOne = require("./static/NixieOne.ttf");
+import * as WebFont  from 'webfontloader';
 
 function fontsActive () {
     var foo: number;

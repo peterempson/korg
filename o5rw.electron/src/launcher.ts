@@ -1,11 +1,12 @@
-/// <reference path="../typings/node.d.ts" />
-/// <reference path="../typings/electron.d.ts" />
+// <reference path="../typings/node.d.ts" />
+// <reference path="../typings/electron.d.ts" />
 
-import electron = require('electron');
+import * as electron from 'electron';
+
 require('electron-debug')({showDevTools: true});
-import path = require("path");
-import {log} from './backend/log';
-import {api} from './backend/api';
+import * as path from "path";
+import * as log from './backend/log';
+import * as api from './backend/api';
 
 let app = electron.app;
 
@@ -29,9 +30,9 @@ class Main {
     }
 
     private init() {
-        log.info("Electron ready");
+        log.log.info("Electron ready");
 
-        api.start();
+        api.api.start();
 
         app.on('window-all-closed', function () {
             if (process.platform !== 'darwin') {
@@ -56,7 +57,7 @@ class Main {
     }
 
     private createWindow() {
-        log.info("Creating new main window");
+        log.log.info("Creating new main window");
 
         this.mainWindow = new electron.BrowserWindow({
             show: false,
@@ -70,11 +71,11 @@ class Main {
 
         let url = RELEASE;
         if (process.argv.indexOf("--dev") !== -1) {
-            log.info("Developer mode enabled!");
+            log.log.info("Developer mode enabled!");
             // TODO: Nothing to do here yet, maybe pass the info to client?
         }
 
-        log.info(`Opening ${url}`);
+        log.log.info(`Opening ${url}`);
 
         this.mainWindow.loadURL(url);
     }

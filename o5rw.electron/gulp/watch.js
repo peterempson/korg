@@ -14,13 +14,13 @@ function reportChange(event) {
 // Disadvantage: Requests are not blocked until bundle is available,
 //               can serve an old app on refresh
 gulp.task("frontend-watch", ["webpack:build-dev"], function () {
-    gulp.watch(settings.paths.client.concat(settings.paths.typings),
+    gulp.watch(settings.paths.client,
         ["webpack:build-dev"])
         .on('change', reportChange);
 });
 
 gulp.task("launcher-watch", ["launcher"], function () {
-    gulp.watch(settings.paths.launcher.concat(settings.paths.typings),
+    gulp.watch(settings.paths.launcher,
         ["launcher"])
         .on('change', reportChange);
 });

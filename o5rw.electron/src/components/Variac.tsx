@@ -25,7 +25,7 @@ export class Variac extends React.Component<VariacProps, VariacState> {
             temperature: 0
         };
         
-        this.motivator = new Motivator( {callback: this.motivatorUpdated, maxSpeed: 0.5, maxValue: this.maxTemperature, acceleration: 0.0012 });
+        this.motivator = new Motivator( {id: 1, callback: this.motivatorUpdated, maxSpeed: 0.5, maxValue: this.maxTemperature, acceleration: 0.0012 });
     }
     
     render() {
@@ -34,7 +34,7 @@ export class Variac extends React.Component<VariacProps, VariacState> {
         );
     }
 
-    mouseMove = ( e: React.MouseEvent ) => {
+    mouseMove = ( e: React.MouseEvent<HTMLCanvasElement> ) => {
         var theta = Math.PI + Math.atan2( this.cy - e.clientY, this.cx - e.clientX ); // 0 East, .5 Pi South
         if (theta > this.midpointTheta && theta < this.minTheta) {
             theta = this.minTheta
@@ -50,11 +50,10 @@ export class Variac extends React.Component<VariacProps, VariacState> {
     }
     
     componentDidMount() {
-        this.motivator.start();
         this.draw();
     }
     
-    motivatorUpdated = (value: number) => {
+    motivatorUpdated = (id: number, value: number) => {
         this.setState({temperature: value});
         
     }

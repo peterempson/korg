@@ -13,14 +13,14 @@ function reportChange(event) {
 }
 
 gulp.task("launcher", function () {
-    return gulp.src(settings.paths.launcher.concat(settings.paths.typings))
+    return gulp.src(settings.paths.launcher)
         .pipe(plumber())
-        .pipe(ts(tsProject))
+        .pipe(tsProject())
         .pipe(gulp.dest("dist/"));
 });
 
 //gulp.task("launcher-watch", ["launcher"], function () {
 //    gulp.watch(
-//        settings.paths.launcher.concat(settings.paths.typings),
+//        settings.paths.launcher,
 //        ["launcher"]).on('change', reportChange);
 //});

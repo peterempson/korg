@@ -1,4 +1,4 @@
-export interface MotivatorProps { callback: Function; maxValue: number, maxSpeed: number, acceleration: number};
+export interface MotivatorProps { id: number, callback: Function; maxValue: number, maxSpeed: number, acceleration: number};
 
 //
 // Handles animation position with acceleration / deceleration
@@ -20,6 +20,9 @@ export class Motivator {
     // ----------------------------
     setValue(value: number) {
         this.targetValue = value;
+        if (!this.animationRequest) {
+            this.animationRequest = requestAnimationFrame(this._tick);
+        }
     }
     
     //
@@ -27,13 +30,6 @@ export class Motivator {
     // ----------------------------
     getValue() {
         return this.targetValue;
-    }
-    
-    // 
-    // Start the animationRequest cycle
-    // --------------------------------
-    start() {
-        this.animationRequest = requestAnimationFrame(this._tick);
     }
     
     // 
@@ -60,8 +56,15 @@ export class Motivator {
                 this._updateDisplayValue(step)
             }
         }
+        
+        if (this.lastAnimationTime && !this.speed ) {
+            // Have reached the target so stop animationFrame cycle
+            this.animationRequest = null;
+        } else {
+            
+            this.animationRequest = requestAnimationFrame(this._tick);
+        }
         this.lastAnimationTime = now;
-        this.animationRequest = requestAnimationFrame(this._tick);
     }
     
     // 
@@ -86,7 +89,7 @@ export class Motivator {
     // ----------------------------------------------------
     _updateDisplayValue(delta: number) {
         this.displayValue = this._limitValue(this.displayValue + delta, this.props.maxValue, 0);
-        this.props.callback(this.displayValue);
+        this.props.callback(this.props.id, this.displayValue);
         if (this.displayValue <= 0 || this.displayValue >= this.props.maxValue || this.displayValue === this.targetValue) {
             this.speed = 0;
         }

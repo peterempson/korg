@@ -1,14 +1,14 @@
-import electron = require('electron');
-import {log} from "./log";
+//import * as electron from 'electron';
+import * as log from "./log";
 
-let ipc = electron.ipcMain;
+//let ipc = electron.ipcMain;
 
 class Api {
     constructor() {
     }
 
     start() { 
-        log.info("Starting backend APIs");
+        log.log.info("Starting backend APIs");
         //ipc.on("PING", this._ping.bind(this))
     }
 
