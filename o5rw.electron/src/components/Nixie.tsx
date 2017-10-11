@@ -20,7 +20,7 @@ export class Nixie extends React.Component< {}, {} > {
             this.digits[i] = {
                 value: silhouettes[i],
                 brightness: 0,
-                motivator: new Motivator( {id: i, callback: this.motivatorUpdated, maxSpeed: 0.005, maxValue: 1, acceleration: 0.01 })
+                motivator: new Motivator( {id: i, callback: this._motivatorUpdated, maxSpeed: 0.01, maxValue: 1, acceleration: 0.01 })
             };
         }
     }
@@ -48,14 +48,9 @@ export class Nixie extends React.Component< {}, {} > {
     }
 
     componentDidMount() {
-        this.draw();
+        this._draw();
     }
-    
-    motivatorUpdated = (id: number, brightness: number) => {
-        this.digits[id].brightness = brightness;
-        this.forceUpdate();
-    }
-    
+
     componentWillUnmount() {
         for (let i = 0; i < 10; i++) {
             this.digits[i].motivator.stop();
@@ -63,11 +58,15 @@ export class Nixie extends React.Component< {}, {} > {
     }
     
     componentDidUpdate() {
-        this.draw();
+        this._draw();
     }
     
+    _motivatorUpdated = (id: number, brightness: number) => {
+        this.digits[id].brightness = brightness;
+        this.forceUpdate();
+    }
     
-    draw() {
+    _draw() {
         const ctx = this.canvas.getContext( "2d" );
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         ctx.textBaseline = 'middle';
@@ -77,25 +76,25 @@ export class Nixie extends React.Component< {}, {} > {
         let s = this.digits.concat().sort((a, b) => {return a.brightness - b.brightness});
         for (let i = 0; i < 10; i++) {
             if (s[i].brightness) {
-                this.drawFlare(ctx, s[i].value, s[i].brightness, 50);
+                this._drawFlare(ctx, s[i].value, s[i].brightness, 50);
             }          
         }
         
         for (let i = 0; i < 10; i++) {
             if (this.digits[i].brightness) {
-                this.drawFlare(ctx, this.digits[i].value, this.digits[i].brightness, 10);
-                this.drawDigit(ctx, this.digits[i].value, this.digits[i].brightness);
+                this._drawFlare(ctx, this.digits[i].value, this.digits[i].brightness, 10);
+                this._drawDigit(ctx, this.digits[i].value, this.digits[i].brightness);
             } else {
-                this.drawDarkDigit(ctx, this.digits[i].value);
+                this._drawDarkDigit(ctx, this.digits[i].value);
             }            
         }
-        this.drawReflection(ctx);
-        this.drawRightReflection(ctx);
+        this._drawReflection(ctx);
+        this._drawRightReflection(ctx);
     }
     
-    drawFlare(ctx: CanvasRenderingContext2D, value: number, brightness: number, baseBlur: number) {
-        ctx.fillStyle = this.getRgb(255, 0, 0, brightness);
-        ctx.shadowColor = this.getRgb(255, 0, 0, brightness); //"#FF0000";
+    _drawFlare(ctx: CanvasRenderingContext2D, value: number, brightness: number, baseBlur: number) {
+        ctx.fillStyle = this._getRgb(255, 0, 0, brightness);
+        ctx.shadowColor = this._getRgb(255, 0, 0, brightness); //"#FF0000";
         ctx.shadowOffsetX = -100
         ctx.shadowBlur = baseBlur + baseBlur * brightness;
         
@@ -107,19 +106,19 @@ export class Nixie extends React.Component< {}, {} > {
         ctx.shadowBlur = 0;
     }
     
-    drawDigit(ctx: CanvasRenderingContext2D, value: number, brightness: number) {
-        ctx.fillStyle = this.getRgb(255, 224, 0, brightness);//'#ffE000';
+    _drawDigit(ctx: CanvasRenderingContext2D, value: number, brightness: number) {
+        ctx.fillStyle = this._getRgb(255, 224, 0, brightness);//'#ffE000';
         ctx.fillText(''+value, this.cx, this.cy);  
         ctx.stroke();
     }
     
-    drawDarkDigit(ctx: CanvasRenderingContext2D, value: number) {
+    _drawDarkDigit(ctx: CanvasRenderingContext2D, value: number) {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
         ctx.strokeStyle = 'rgba(0, 0, 0, 0)';
         ctx.fillText(''+ value, this.cx, this.cy);
     }
 
-    drawReflection(ctx: CanvasRenderingContext2D) {
+    _drawReflection(ctx: CanvasRenderingContext2D) {
         var gradient = ctx.createLinearGradient(0, this.cy, 6, this.cy);
         gradient.addColorStop(0, 'rgba(255,255,255,0.5)');
         gradient.addColorStop(1, 'rgba(255,255,255,0)');
@@ -130,7 +129,7 @@ export class Nixie extends React.Component< {}, {} > {
         ctx.fill();
     }
     
-    drawRightReflection(ctx: CanvasRenderingContext2D) {
+    _drawRightReflection(ctx: CanvasRenderingContext2D) {
         var gradient = ctx.createLinearGradient(this.width, this.cy, this.width-6, this.cy);
         gradient.addColorStop(0, 'rgba(255,255,255,0.5)');
         gradient.addColorStop(1, 'rgba(255,255,255,0)');
@@ -141,7 +140,7 @@ export class Nixie extends React.Component< {}, {} > {
         ctx.fill();
     }
     
-    getRgb(r: number, g: number, b: number, scale: number) {
+    _getRgb(r: number, g: number, b: number, scale: number) {
         return `rgba(${Math.floor(r)},${Math.floor(g)},${Math.floor(b)},${scale})`;
     }
     
