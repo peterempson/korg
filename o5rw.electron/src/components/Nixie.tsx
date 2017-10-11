@@ -5,7 +5,7 @@ interface DigitState {value: number, brightness: number, motivator: Motivator}
 export class Nixie extends React.Component< {}, {} > {
     canvas: HTMLCanvasElement;
     width=100;
-    physicalWidth=90;
+    physicalWidth=75;
     cx = this.width/2;
     height=150;
     cy = this.height/2;
@@ -33,13 +33,17 @@ export class Nixie extends React.Component< {}, {} > {
                 this.digits[i].motivator.setValue(0);
             }
         }
-        
+    }
+    
+    clear() {
+        for (let i = 0; i < 10; i++) {
+            this.digits[i].motivator.setValue(0);
+        }
     }
     
     render() {
-      
         return (
-            <canvas width={this.width} height={this.height} style={{width: this.physicalWidth, height: this.height}} ref={x => this.canvas = x} className="bob">Your browser does not support the HTML5 canvas tag.</canvas>
+            <canvas width={this.width} height={this.height} style={{width: this.physicalWidth, height: this.height, paddingLeft: 5, paddingRight: 5}} ref={x => this.canvas = x} className="bob">Your browser does not support the HTML5 canvas tag.</canvas>
             );
     }
 
@@ -65,7 +69,6 @@ export class Nixie extends React.Component< {}, {} > {
     
     draw() {
         const ctx = this.canvas.getContext( "2d" );
-        //ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         ctx.textBaseline = 'middle';
         ctx.textAlign = "center";
@@ -87,6 +90,7 @@ export class Nixie extends React.Component< {}, {} > {
             }            
         }
         this.drawReflection(ctx);
+        this.drawRightReflection(ctx);
     }
     
     drawFlare(ctx: CanvasRenderingContext2D, value: number, brightness: number, baseBlur: number) {
@@ -117,12 +121,23 @@ export class Nixie extends React.Component< {}, {} > {
 
     drawReflection(ctx: CanvasRenderingContext2D) {
         var gradient = ctx.createLinearGradient(0, this.cy, 6, this.cy);
-        gradient.addColorStop(0, 'rgba(255,255,255,0.8)');
+        gradient.addColorStop(0, 'rgba(255,255,255,0.5)');
         gradient.addColorStop(1, 'rgba(255,255,255,0)');
         ctx.fillStyle = gradient;
 
         ctx.beginPath();
         ctx.ellipse(0,this.cy, 6, this.cy*.6, 0,Math.PI*1.5,Math.PI*0.5, false);
+        ctx.fill();
+    }
+    
+    drawRightReflection(ctx: CanvasRenderingContext2D) {
+        var gradient = ctx.createLinearGradient(this.width, this.cy, this.width-6, this.cy);
+        gradient.addColorStop(0, 'rgba(255,255,255,0.5)');
+        gradient.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = gradient;
+
+        ctx.beginPath();
+        ctx.ellipse(this.width,this.cy-20, 6, this.cy*.3, 0, Math.PI*0.5,Math.PI*1.5, false);
         ctx.fill();
     }
     
