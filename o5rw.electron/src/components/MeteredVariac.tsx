@@ -14,15 +14,17 @@ export class MeteredVariac extends React.Component< {}, {} > {
 
     render() {
         return (
-                <div>
-                    <div>
+            <div className="someOtherclass">
+                <div className="someclass">
                     <Nixie ref={x => this.nixie3 = x} /> 
                     <Nixie ref={x => this.nixie2 = x} />
                     <Nixie ref={x => this.nixie1 = x} />
-                    </div>	
-                    <Variac updated = {this.variacUpdated} ref={x => this.variac = x} />
-
                 </div>
+                <div>
+                    <Variac updated = {this.variacUpdated} ref={x => this.variac = x} />
+                </div>
+                Hi
+            </div>
         );
     }
     

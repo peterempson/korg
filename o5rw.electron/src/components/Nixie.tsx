@@ -43,7 +43,7 @@ export class Nixie extends React.Component< {}, {} > {
     
     render() {
         return (
-            <canvas width={this.width} height={this.height} style={{width: this.physicalWidth, height: this.height, paddingLeft: 5, paddingRight: 5}} ref={x => this.canvas = x} className="bob">Your browser does not support the HTML5 canvas tag.</canvas>
+            <canvas width={this.width} height={this.height} style={{width: this.physicalWidth, height: this.height, paddingLeft: 5, paddingRight: 5}} ref={x => this.canvas = x} >Your browser does not support the HTML5 canvas tag.</canvas>
             );
     }
 
@@ -69,6 +69,17 @@ export class Nixie extends React.Component< {}, {} > {
     _draw() {
         const ctx = this.canvas.getContext( "2d" );
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        var grd=ctx.createLinearGradient(0, 0, this.cx, 0);
+        grd.addColorStop(1, "#101010");
+        grd.addColorStop(0, "#000000");
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, this.cx, this.height);
+        var grd2=ctx.createLinearGradient(this.cx, 0, this.width, 0);
+        grd2.addColorStop(0, "#101010");
+        grd2.addColorStop(1, "#050505");
+        ctx.fillStyle = grd2;
+        ctx.fillRect(this.cx, 0, this.width, this.height);
+        
         ctx.textBaseline = 'middle';
         ctx.textAlign = "center";
         ctx.font = "normal 120px 'Nixie One'";
@@ -125,8 +136,15 @@ export class Nixie extends React.Component< {}, {} > {
         ctx.fillStyle = gradient;
 
         ctx.beginPath();
-        ctx.ellipse(0,this.cy, 6, this.cy*.6, 0,Math.PI*1.5,Math.PI*0.5, false);
+        ctx.ellipse(0,this.cy-20, 6, this.cy*.3, 0,Math.PI*1.5,Math.PI*0.5, false);
         ctx.fill();
+        
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, this.height);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "#302530";
+        ctx.stroke();
     }
     
     _drawRightReflection(ctx: CanvasRenderingContext2D) {
@@ -136,8 +154,16 @@ export class Nixie extends React.Component< {}, {} > {
         ctx.fillStyle = gradient;
 
         ctx.beginPath();
-        ctx.ellipse(this.width,this.cy-20, 6, this.cy*.3, 0, Math.PI*0.5,Math.PI*1.5, false);
+        ctx.ellipse(this.width,this.cy, 6, this.cy*.6, 0, Math.PI*0.5,Math.PI*1.5, false);
+       // ctx.ellipse(this.width,this.cy-20, 6, this.cy*.3, 0, Math.PI*0.5,Math.PI*1.5, false);
         ctx.fill();
+        
+        ctx.beginPath();
+        ctx.moveTo(this.width, 0);
+        ctx.lineTo(this.width, this.height);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "#302530";
+        ctx.stroke();
     }
     
     _getRgb(r: number, g: number, b: number, scale: number) {

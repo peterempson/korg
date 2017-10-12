@@ -6,9 +6,9 @@ export interface VariacProps { updated: Function };
 export interface VariacState {temperature: number};
 export class Variac extends React.Component<VariacProps, VariacState> {
     canvas: HTMLCanvasElement;
-    width=250;
+    width=255;
     cx = this.width/2;
-    height=250;
+    height=255;
     cy = this.height/2;
     r = 60;
     rr=100;
@@ -32,7 +32,7 @@ export class Variac extends React.Component<VariacProps, VariacState> {
     
     render() {
         return (
-            <canvas width={this.width} height={this.height} className="bob" onMouseMove={this.mouseMove} ref={x => this.canvas = x}>Your browser does not support the HTML5 canvas tag.</canvas>
+            <canvas width={this.width} height={this.height} onMouseMove={this.mouseMove} ref={x => this.canvas = x}>Your browser does not support the HTML5 canvas tag.</canvas>
         );
     }
 
@@ -50,7 +50,7 @@ export class Variac extends React.Component<VariacProps, VariacState> {
             m += 2 * Math.PI;
         }
         
-        this.motivator.setValue(Math.floor(this.maxTemperature * m / this.arcLength));
+        this.motivator.setValue(this.maxTemperature * m / this.arcLength);
     }
     
     componentDidMount() {
@@ -68,7 +68,7 @@ export class Variac extends React.Component<VariacProps, VariacState> {
     
     componentDidUpdate() {
         this.draw();
-        this.props.updated(this.state.temperature)
+        this.props.updated(Math.floor(this.state.temperature));
     }
 
     draw() {
@@ -97,15 +97,33 @@ export class Variac extends React.Component<VariacProps, VariacState> {
         let y = this.cy + 10*Math.sin(theta+.2*Math.PI);
         var grd=ctx.createRadialGradient(x, y, 50, x, y, radius+8);
         grd.addColorStop(0, "#101010");
-        grd.addColorStop(1, "#403040");
+        grd.addColorStop(1, "#353535");
 
         ctx.beginPath();
         ctx.arc( this.cx, this.cy, radius, 0, 2 * Math.PI);
+        
+        ctx.strokeStyle ="#505050"
+        ctx.lineWidth = 1;
+        
+        ctx.shadowColor = "black";
+        ctx.shadowBlur = 20;
+        ctx.shadowOffsetX = -4;
+        ctx.shadowOffsetY = -4;
+        
+        ctx.stroke();
+        ctx.stroke();
+        ctx.stroke();
+        ctx.stroke();
+        ctx.stroke();
+        ctx.stroke();
+        ctx.stroke();
+        ctx.stroke();
+        
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
         ctx.fillStyle = grd;
         ctx.fill();
-        ctx.strokeStyle ="#605060"
-        ctx.lineWidth = 2;
-        ctx.stroke();
     }
     
     drawMarks(ctx: CanvasRenderingContext2D, theta: number, radius: number, markCount: number) {
@@ -186,7 +204,7 @@ export class Variac extends React.Component<VariacProps, VariacState> {
         ctx.fillStyle = grd;
         ctx.fill();
         ctx.lineWidth = 1;
-        ctx.strokeStyle = "#605060";
+        ctx.strokeStyle = "#404040";
         ctx.stroke();
     }
     
