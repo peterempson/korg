@@ -19,7 +19,7 @@ export class Motivator {
     // Set the target value
     // ----------------------------
     setValue(value: number) {
-        this.targetValue = value;
+        this.targetValue = this._limitValue(value, this.props.maxValue, 0);
         if (!this.animationRequest) {
             this.animationRequest = requestAnimationFrame(this._tick);
         }
@@ -82,14 +82,14 @@ export class Motivator {
         } else {
             unlimitedSpeed = this.speed - speedDelta
         }
-        this.speed = this._limitValue(unlimitedSpeed, this.props.maxSpeed);
+        this.speed = this._limitSignedValue(unlimitedSpeed, this.props.maxSpeed);
     }
     
     //
     // Calculate the new display value and hit the callback
     // ----------------------------------------------------
     _updateDisplayValue(delta: number) {
-        this.displayValue = this._limitValue(this.displayValue + delta, this.props.maxValue, 0);
+        this.displayValue = this._limitSignedValue(this.displayValue + delta, this.props.maxValue, 0);
         this.props.callback(this.props.id, this.displayValue);
         if (this.displayValue <= 0 || this.displayValue >= this.props.maxValue || this.displayValue === this.targetValue) {
             this.speed = 0;
@@ -106,7 +106,7 @@ export class Motivator {
             // Still decelerating away from the target
             return step;
         } 
-        return this._limitValue(step, distanceToCover);
+        return this._limitSignedValue(step, distanceToCover);
     }
 
     //
@@ -115,13 +115,25 @@ export class Motivator {
     _sameSigned(a: number, b: number) {
         return (a > 0 && b > 0) || (a < 0 && b < 0);
     }
+
+    //
+    // Return value limited to max and min
+    // -----------------------------------------------------------------------
+    _limitValue(value: number, max: number, min: number) {
+        if (value  > max) {
+            return max;
+        } else if (value < min) {
+            return min;
+        }
+        return value;
+    }
     
     //
-    // Return  value limited to max and optionally min, retaining value's sign
+    // Return value limited to max and optionally min, retaining value's sign
     // -----------------------------------------------------------------------
-    _limitValue(value: number, max: number, min?: number) {
+    _limitSignedValue(value: number, max: number, min?: number) {
         var belowMax = Math.min(Math.abs(value), Math.abs(max));
-        var result = min ? Math.max(belowMax, Math.abs(min)): belowMax;
+        var result = min != null ? Math.max(belowMax, Math.abs(min)): belowMax;
         return value < 0 ? -result : result;
     }
     

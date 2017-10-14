@@ -20,6 +20,7 @@ export class Variac extends React.Component<VariacProps, VariacState> {
     arcLength = 2 * Math.PI - ( this.minTheta - this.maxTheta )
     maxTemperature = 127;
     
+    mouseStart: number;
     
     constructor( props: VariacProps ) {
         super( props );
@@ -32,25 +33,36 @@ export class Variac extends React.Component<VariacProps, VariacState> {
     
     render() {
         return (
-            <canvas width={this.width} height={this.height} onMouseMove={this.mouseMove} ref={x => this.canvas = x}>Your browser does not support the HTML5 canvas tag.</canvas>
+            <canvas width={this.width} height={this.height} onMouseMove={this.mouseMove} onMouseDown={this.mouseDown} onMouseUp={this.mouseUp} ref={x => this.canvas = x}>Your browser does not support the HTML5 canvas tag.</canvas>
         );
     }
 
-    mouseMove = ( e: React.MouseEvent<HTMLCanvasElement> ) => {
+    mouseMove = ( e: React.MouseEvent<HTMLCanvasElement> ) => {    
+        if (this.mouseStart != null ) { // not null or undefined  
+            let ma = this.mouseAngle(e); 
+            let delta = this._calculateDifferenceBetweenAngles(this.mouseStart, ma);
+            this.motivator.setValue(this.motivator.getValue() + this.calculateValue(delta));
+            this.mouseStart = ma;
+        }
+    }
+    
+    mouseDown  = ( e: React.MouseEvent<HTMLCanvasElement> ) => {
+        this.mouseStart = this.mouseAngle(e);
+    }
+    
+    mouseUp  = ( e: React.MouseEvent<HTMLCanvasElement> ) => {
+        this.mouseStart = null;
+    }
+    
+    mouseAngle(e: React.MouseEvent<HTMLCanvasElement> ) {
         let mouseX =  e.clientX - this.canvas.offsetLeft;
         let clientY = e.clientY - this.canvas.offsetTop;
-        var theta = Math.PI + Math.atan2( this.cy - clientY, this.cx - mouseX );
-        if (theta > this.midpointTheta && theta < this.minTheta) {
-            theta = this.minTheta
-        } else if (theta <= this.midpointTheta && theta > this.maxTheta) {
-            theta = this.maxTheta
-        }
-        var m = theta - this.minTheta 
-        if (m < 0) {
-            m += 2 * Math.PI;
-        }
-        
-        this.motivator.setValue(this.maxTemperature * m / this.arcLength);
+        var theta = Math.atan2( this.cy - clientY, this.cx - mouseX );
+        return theta; 
+    }
+    
+    calculateValue(angle: number) {
+      return this.maxTemperature * angle / this.arcLength;
     }
     
     componentDidMount() {
@@ -251,4 +263,12 @@ export class Variac extends React.Component<VariacProps, VariacState> {
         
 
     }
+    _calculateDifferenceBetweenAngles(firstAngle: number, secondAngle: number)
+    {
+          let difference = secondAngle - firstAngle;
+          while (difference < -Math.PI) difference += 2 * Math.PI;
+          while (difference > Math.PI) difference -= 2 * Math.PI;
+          return difference;
+   }
+    
 }
