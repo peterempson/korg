@@ -79,12 +79,13 @@ export class Nixie extends React.Component< {}, {} > {
                 this._drawFlare(ctx, s[i].value, s[i].brightness, 50);
             }          
         }
-        
+        let darkBeforeLight = false;
         for (let i = 0; i < 10; i++) {
             if (this.digits[i].brightness) {
+                darkBeforeLight = true;
                 this._drawFlare(ctx, this.digits[i].value, this.digits[i].brightness, 10);
                 this._drawDigit(ctx, this.digits[i].value, this.digits[i].brightness);
-            } else {
+            } else if (darkBeforeLight) {
                 this._drawDarkDigit(ctx, this.digits[i].value);
             }            
         }
@@ -112,7 +113,7 @@ export class Nixie extends React.Component< {}, {} > {
         ctx.shadowColor = this._getRgb(255, 0, 0, brightness); //"#FF0000";
         ctx.shadowOffsetX = -100
         ctx.shadowBlur = baseBlur + baseBlur * brightness;
-        
+        ctx.beginPath();
         for (var i = 0; i < 12; i++) {
             ctx.fillText(''+value, this.cx+100, this.cy); 
             ctx.stroke();
@@ -124,12 +125,14 @@ export class Nixie extends React.Component< {}, {} > {
     _drawDigit(ctx: CanvasRenderingContext2D, value: number, brightness: number) {
         ctx.fillStyle = this._getRgb(255, 224, 0, brightness);
         ctx.fillText(''+value, this.cx, this.cy);  
-        ctx.stroke();
     }
     
     _drawDarkDigit(ctx: CanvasRenderingContext2D, value: number) {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0)';
+        if (value === 8 || value === 3) {
+            // Unpleasant artifacts
+            return;
+        }
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.10)';
         ctx.fillText(''+ value, this.cx, this.cy);
     }
 
@@ -138,11 +141,9 @@ export class Nixie extends React.Component< {}, {} > {
         gradient.addColorStop(0, 'rgba(255,255,255,0.5)');
         gradient.addColorStop(1, 'rgba(255,255,255,0)');
         ctx.fillStyle = gradient;
-
+        ctx.beginPath(); 
         ctx.ellipse(0,this.cy-20, 6, this.cy*.3, 0,Math.PI*1.5,Math.PI*0.5, false);
         ctx.fill();
-        
-
     }
     
     _drawRightReflection(ctx: CanvasRenderingContext2D) {
@@ -150,11 +151,9 @@ export class Nixie extends React.Component< {}, {} > {
         gradient.addColorStop(0, 'rgba(255,255,255,0.5)');
         gradient.addColorStop(1, 'rgba(255,255,255,0)');
         ctx.fillStyle = gradient;
-
+        ctx.beginPath();
         ctx.ellipse(this.width,this.cy, 6, this.cy*.6, 0, Math.PI*0.5,Math.PI*1.5, false);
         ctx.fill();
-        
-
     }
     
     drawDeliniations(ctx: CanvasRenderingContext2D) {
