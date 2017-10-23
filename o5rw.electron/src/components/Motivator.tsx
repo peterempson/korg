@@ -89,7 +89,7 @@ export class Motivator {
     // Calculate the new display value and hit the callback
     // ----------------------------------------------------
     _updateDisplayValue(delta: number) {
-        this.displayValue = this._limitSignedValue(this.displayValue + delta, this.props.maxValue, 0);
+        this.displayValue = this._limitValue(this.displayValue + delta, this.props.maxValue, 0);
         this.props.callback(this.props.id, this.displayValue);
         if (this.displayValue <= 0 || this.displayValue >= this.props.maxValue || this.displayValue === this.targetValue) {
             this.speed = 0;
@@ -106,7 +106,11 @@ export class Motivator {
             // Still decelerating away from the target
             return step;
         } 
-        return this._limitSignedValue(step, distanceToCover);
+        if (distanceToCover < 0) {
+            return -this._limitValue(-step, -distanceToCover);
+        } else {
+            return this._limitValue(step, distanceToCover);
+        }
     }
 
     //
@@ -119,10 +123,10 @@ export class Motivator {
     //
     // Return value limited to max and min
     // -----------------------------------------------------------------------
-    _limitValue(value: number, max: number, min: number) {
+    _limitValue(value: number, max: number, min?: number) {
         if (value  > max) {
             return max;
-        } else if (value < min) {
+        } else if (min != null && value < min) {
             return min;
         }
         return value;
@@ -132,8 +136,7 @@ export class Motivator {
     // Return value limited to max and optionally min, retaining value's sign
     // -----------------------------------------------------------------------
     _limitSignedValue(value: number, max: number, min?: number) {
-        var belowMax = Math.min(Math.abs(value), Math.abs(max));
-        var result = min != null ? Math.max(belowMax, Math.abs(min)): belowMax;
+        var result = this._limitValue(Math.abs(value), max, min);
         return value < 0 ? -result : result;
     }
     

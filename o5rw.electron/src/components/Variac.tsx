@@ -18,7 +18,7 @@ export class Variac extends React.Component<VariacProps, VariacState> {
     midpointTheta = .5 * Math.PI;
     maxTheta = 0.35 * Math.PI;
     arcLength = 2 * Math.PI - ( this.minTheta - this.maxTheta )
-    maxTemperature = 127;
+    maxValue = 127;
     
     mouseStart: number;
     
@@ -28,7 +28,7 @@ export class Variac extends React.Component<VariacProps, VariacState> {
             temperature: 0
         };
         
-        this.motivator = new Motivator( {id: 1, callback: this.motivatorUpdated, maxSpeed: 0.5, maxValue: this.maxTemperature, acceleration: 0.0012 });
+        this.motivator = new Motivator( {id: 1, callback: this.motivatorUpdated, maxSpeed: 0.15, maxValue: this.maxValue, acceleration: 0.0003 });
     }
     
     render() {
@@ -41,8 +41,12 @@ export class Variac extends React.Component<VariacProps, VariacState> {
         if (this.mouseStart != null ) { // not null or undefined  
             let ma = this.mouseAngle(e); 
             let delta = this._calculateDifferenceBetweenAngles(this.mouseStart, ma);
-            this.motivator.setValue(this.motivator.getValue() + this.calculateValue(delta));
-            this.mouseStart = ma;
+            let rad = this.mouseRadius(e);
+            if (rad > 20) {
+                delta *= (rad < 60) ? 0.3: 1;
+                this.motivator.setValue(this.motivator.getValue() + this.calculateValue(delta));
+                this.mouseStart = ma;
+            }
         }
     }
     
@@ -56,13 +60,19 @@ export class Variac extends React.Component<VariacProps, VariacState> {
     
     mouseAngle(e: React.MouseEvent<HTMLCanvasElement> ) {
         let mouseX =  e.clientX - this.canvas.offsetLeft;
-        let clientY = e.clientY - this.canvas.offsetTop;
-        var theta = Math.atan2( this.cy - clientY, this.cx - mouseX );
+        let mouseY = e.clientY - this.canvas.offsetTop;
+        var theta = Math.atan2( this.cy - mouseY, this.cx - mouseX );
         return theta; 
     }
     
+    mouseRadius(e: React.MouseEvent<HTMLCanvasElement> ) {
+        let mouseX =  this.cx - (e.clientX - this.canvas.offsetLeft);
+        let mouseY = this.cy - (e.clientY - this.canvas.offsetTop);
+        return Math.sqrt(mouseX*mouseX+mouseY*mouseY); 
+    }
+    
     calculateValue(angle: number) {
-      return this.maxTemperature * angle / this.arcLength;
+      return this.maxValue * angle / this.arcLength;
     }
     
     componentDidMount() {
@@ -85,7 +95,7 @@ export class Variac extends React.Component<VariacProps, VariacState> {
 
     draw() {
         
-        const theta = this.state.temperature / this.maxTemperature * this.arcLength + this.minTheta;
+        const theta = this.state.temperature / this.maxValue * this.arcLength + this.minTheta;
         const ctx = this.canvas.getContext( "2d" );
 
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -95,14 +105,7 @@ export class Variac extends React.Component<VariacProps, VariacState> {
         this.drawArrow(ctx, theta, this.rr-30);
         this.drawKnob(ctx, theta, this.rr-30);
         this.drawBand(ctx, theta);
-//        
-//        ctx.beginPath();
-//
-//        ctx.moveTo( this.cx, this.cy )
-//        
-        
     }
-
     
     drawBevel(ctx: CanvasRenderingContext2D, theta: number, radius: number) {
         let x = this.cx + 10*Math.cos(theta+.2*Math.PI);
