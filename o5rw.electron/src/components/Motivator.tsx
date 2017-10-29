@@ -44,8 +44,7 @@ export class Motivator {
     //
     // Main animate frame call
     // -----------------------
-    _tick = () => {
-        var now = performance.now();
+    _tick = (now: number) => {
         if (this.lastAnimationTime && this.targetValue !== this.displayValue) {
             var timePassed = now - this.lastAnimationTime
             var distanceToCover = this.targetValue - this.displayValue;

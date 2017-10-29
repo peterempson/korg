@@ -14,8 +14,8 @@ export class MeteredVariac extends React.Component< {}, {} > {
 
     render() {
         return (
-            <div className="someOtherclass">
-                <div className="someclass">
+            <div className="meteredVariacContent" >
+                <div className="nixieContainer">
                     <Nixie ref={x => this.nixie3 = x} /> 
                     <Nixie ref={x => this.nixie2 = x} />
                     <Nixie ref={x => this.nixie1 = x} />

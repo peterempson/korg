@@ -33,7 +33,7 @@ export class Variac extends React.Component<VariacProps, VariacState> {
     
     render() {
         return (
-            <canvas width={this.width} height={this.height} onMouseMove={this.mouseMove} onMouseDown={this.mouseDown} onMouseUp={this.mouseUp} ref={x => this.canvas = x}>Your browser does not support the HTML5 canvas tag.</canvas>
+            <canvas className="variac" width={this.width} height={this.height} onMouseMove={this.mouseMove} onMouseDown={this.mouseDown} onMouseUp={this.mouseUp} ref={x => this.canvas = x}>Your browser does not support the HTML5 canvas tag.</canvas>
         );
     }
 
@@ -43,7 +43,7 @@ export class Variac extends React.Component<VariacProps, VariacState> {
             let delta = this._calculateDifferenceBetweenAngles(this.mouseStart, ma);
             let rad = this.mouseRadius(e);
             if (rad > 20) {
-                delta *= (rad < 60) ? 0.3: 1;
+                delta *= (rad < 60) ? 0.2: 1;
                 this.motivator.setValue(this.motivator.getValue() + this.calculateValue(delta));
                 this.mouseStart = ma;
             }

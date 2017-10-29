@@ -20,7 +20,8 @@ function fontsActive () {
 WebFont.load({
     custom: {
       families: ['Nixie One'],
-      urls: ["https://fonts.googleapis.com/css?family=Nixie+One"]
+      urls: ["https://fonts.googleapis.com/css?family=Nixie+One",
+             "https://fonts.googleapis.com/css?family=Patrick+Hand+SC"]
     },
     active: fontsActive
   });
